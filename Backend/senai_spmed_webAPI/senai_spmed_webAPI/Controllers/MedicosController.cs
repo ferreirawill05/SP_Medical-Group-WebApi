@@ -16,103 +16,123 @@ namespace senai_spmed_webAPI.Controllers
     [ApiController]
     public class MedicosController : ControllerBase
     {
-        /// <summary>
-        /// Objeto que irá receber todos os métodos definidos na interface
-        /// </summary>
         private IMedicoRepository _medicoRepository { get; set; }
 
-        /// <summary>
-        /// Instancia o objeto para que haja referência às implementações feitas no repositório
-        /// </summary>
         public MedicosController()
         {
             _medicoRepository = new MedicoRepository();
         }
 
         /// <summary>
-        /// Lista todos os Médicos existentes
+        /// Lista todos os medicos
         /// </summary>
-        /// <returns>Uma lista de médicos com o status code 200 - Ok</returns>
+        /// <returns>uma lista de medicos</returns>
         [Authorize(Roles = "1")]
         [HttpGet]
-        public IActionResult Listar()
+        public IActionResult ListarTodos()
         {
-            return Ok(_medicoRepository.Listar());
+            try
+            {
+                return Ok(_medicoRepository.ListarTodos());
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
         }
 
         /// <summary>
-        /// Busca um médico pelo seu id
+        /// Busca um medico pelo id
         /// </summary>
-        /// <param name="idMedico">id do médico a ser buscado</param>
-        /// <returns>Um médico encontrado com o status code 200 - Ok</returns>
+        /// <param name="idMedico">id do medico a ser procurado</param>
+        /// <returns>Um medico</returns>
         [Authorize(Roles = "1")]
         [HttpGet("{idMedico}")]
         public IActionResult BuscarPorId(int idMedico)
         {
-            Medico medicoBuscado = _medicoRepository.BuscarPorId(idMedico);
-
-            if (medicoBuscado == null)
+            try
             {
-                return NotFound("O Medico informado não existe!");
+                Medico medicoBuscado = _medicoRepository.BuscarPorId(idMedico);
+
+                if (medicoBuscado != null)
+                {
+                    return Ok(medicoBuscado);
+                }
+
+                return BadRequest("O medico requisitado não existe");
+
             }
-            return Ok(medicoBuscado);
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
+
         }
 
         /// <summary>
-        /// Cadastra um Médico
+        /// Cadastra um novo medico
         /// </summary>
-        /// <param name="novoMedico">Médico a ser cadastrado</param>
-        /// <returns>Um status code 201 - Created</returns>
+        /// <param name="novoMedico">Objeto medico com os atributos a serem cadastrados</param>
+        /// <returns>Status code 201 created</returns>
         [Authorize(Roles = "1")]
         [HttpPost]
         public IActionResult Cadastrar(Medico novoMedico)
         {
-            _medicoRepository.Cadastrar(novoMedico);
+            try
+            {
+                _medicoRepository.Cadastrar(novoMedico);
 
-            return StatusCode(201);
+                return StatusCode(201);
+
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
         }
 
         /// <summary>
-        /// Atualiza um médico existente
+        /// Atualiza um medico
         /// </summary>
-        /// <param name="medicoAtualizado">Objeto com as novas informações do Médico e o id do médico a ser atualizado</param>
-        /// <returns>Um status code 204 - No content</returns>
+        /// <param name="idMedico">Id do medico a ser buscado</param>
+        /// <param name="medicoAtualizado">Objeto com atributos a serem inseridos</param>
+        /// <returns>Status code 204 no content</returns>
         [Authorize(Roles = "1")]
-        [HttpPut]
-        public IActionResult Atualizar(Medico medicoAtualizado)
+        [HttpPut("{idMedico}")]
+        public IActionResult Atualizar(int idMedico, Medico medicoAtualizado)
         {
             try
             {
-                Medico medicoBuscado = _medicoRepository.BuscarPorId(medicoAtualizado.IdMedico);
-                if (medicoBuscado != null)
-                {
-                    if (medicoAtualizado != null)
-                        _medicoRepository.Atualizar(medicoAtualizado);
-                }
-                else
-                {
-                    return BadRequest(new { mensagem = "O Médico informado não existe" });
-                }
+                _medicoRepository.Atualizar(idMedico, medicoAtualizado);
+
                 return StatusCode(204);
             }
-            catch (Exception ex)
+            catch (Exception erro)
             {
-                return BadRequest(ex);
+                return BadRequest(erro);
             }
+
         }
 
         /// <summary>
-        /// Deleta um médico
+        /// Exclui um medico
         /// </summary>
-        /// <param name="idMedico">id do Médico a ser deletado</param>
-        /// <returns>Um status code 204 - No content</returns>
+        /// <param name="idMedico">Id do medico a ser buscado</param>
+        /// <returns>Status code 204 no content</returns>
         [Authorize(Roles = "1")]
         [HttpDelete("{idMedico}")]
         public IActionResult Deletar(int idMedico)
         {
-            _medicoRepository.Deletar(idMedico);
+            try
+            {
+                _medicoRepository.Deletar(idMedico);
 
-            return StatusCode(204);
+                return StatusCode(204);
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
         }
     }
 }

@@ -1,61 +1,68 @@
-﻿using System;
+﻿using senai_spmed_webAPI.Domains;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace senai_spmed_webAPI.Interfaces
 {
+    /// <summary>
+    /// Interface responsável pelo InscricaooRepository
+    /// </summary>
     interface IConsultaRepository
     {
         /// <summary>
-        /// Altera o status de uma consulta
+        /// Listar todas as cosultas
         /// </summary>
-        /// <param name="idConsulta">Id da consulta a ser atualizada</param>
-        /// <param name="idSituacao">Id da nova situação de consulta</param>
-        void AlterarStatus(int idConsulta, int idSituacao);
+        /// <returns>Lista com todas as consultas</returns>
+        List<Consultum> ListarTodas();
 
         /// <summary>
-        /// Lista as consulta relacionadas a um usuario
+        /// Buscar uma consulta pelo id
         /// </summary>
-        /// <param name="idUsuario">Id do usuário a ter suas consultas listadas</param>
-        List<Consulta> ListarMinhas(int idUsuario);
-
-        /// <summary>
-        /// Atualiza a descrição de uma consulta 
-        /// </summary>
-        /// <param name="idConsulta">Id da consulta a ser atualizada</param>
-        /// <param name="descricao">Descrição as ser atualizada</param>
-        void AdicionarDescricao(int idConsulta, string descricao);
-
-        /// <summary>
-        /// Busca por um consulta pelo seu ID
-        /// </summary>
-        /// <param name="idConsulta">ID do consulta a ser buscado</param>
+        /// <param name="idConsulta">id da consulta a ser procurada</param>
         /// <returns>Consulta encontrada</returns>
-        Consulta BuscarPorId(int idConsulta);
+        Consultum BuscarPorId(int idConsulta);
 
         /// <summary>
-        /// Cadastra uma consulta
+        /// Cria uma nova consulta
         /// </summary>
-        /// <param name="novaConsulta">Recebe os dados de uma consulta cadastrada</param>
-        void Cadastrar(Consulta novaConsulta);
+        /// <param name="novaConsulta">Objeto consulta com os atributos a serem cadastrados</param>
+        void Cadastrar(Consultum novaConsulta);
 
         /// <summary>
-        /// Lista todas as consultas
+        /// Atualiza uma Consulta pelo id
         /// </summary>
-        /// <returns> Uma lista de consultas</returns>
-        List<Consulta> Listar();
+        /// <param name="idConsulta">Id da consulta a ser atualizada</param>
+        /// <param name="consultaAtualizada">objeto com atributos a serem atuzalizados da consulta</param>
+        void Atualizar(int idConsulta, Consultum consultaAtualizada);
 
         /// <summary>
-        /// Atualiza os dados de uma consulta
+        /// Exclui uma consulta
         /// </summary>
-        /// <param name="consultaAtualizada">Recebe os novos dados da consulta</param>
-        void Atualizar(Consulta consultaAtualizada);
-
-        /// <summary>
-        /// Deleta uma consulta
-        /// </summary>
-        /// <param name="idConsulta"> ID da consulta a ser deletada</param>
+        /// <param name="idConsulta">id da consulta a ser excluida</param>
         void Deletar(int idConsulta);
+
+        /// <summary>
+        /// Lista todos os eventos de um determinado usuário
+        /// </summary>
+        /// <param name="idUsuario">Id do usuário que participa dos eventos</param>
+        /// <returns>Uma lista de presenças com os dados dos eventos</returns>
+        List<Consultum> ListarMinhas(int idUsuario);
+
+        
+        /// <summary>
+        /// Adiciona descrição a uma consulta existente
+        /// </summary>
+        /// <param name="idConsulta">id da consulta a ter a descrição atualizada</param>
+        /// <param name="ConsultaComDescricao">objeto com atributo descrição</param>
+        void AdicionarDecrição(int idConsulta, Consultum ConsultaComDescricao);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="idConsulta"></param>
+        /// <param name="status"></param>
+        void Cancela(int idConsulta, string status);
     }
 }

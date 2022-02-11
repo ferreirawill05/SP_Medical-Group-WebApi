@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "senai_spmed_webAPI", "senai_spmed_webAPI\senai_spmed_webAPI.csproj", "{10ECBB19-573D-4CA1-AA90-3E58BC0CA5A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "senai_spmed_webAPI", "senai_spmed_webAPI\senai_spmed_webAPI.csproj", "{0BB4E0FE-3F53-4351-85B3-6262BAFC3DB3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{10ECBB19-573D-4CA1-AA90-3E58BC0CA5A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10ECBB19-573D-4CA1-AA90-3E58BC0CA5A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10ECBB19-573D-4CA1-AA90-3E58BC0CA5A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10ECBB19-573D-4CA1-AA90-3E58BC0CA5A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BB4E0FE-3F53-4351-85B3-6262BAFC3DB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BB4E0FE-3F53-4351-85B3-6262BAFC3DB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BB4E0FE-3F53-4351-85B3-6262BAFC3DB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BB4E0FE-3F53-4351-85B3-6262BAFC3DB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {F76A28AD-E918-400C-8A75-6A1CF85AFC65}
+		SolutionGuid = {0F0F8397-5301-45F4-BF5C-BD14D123ED84}
 	EndGlobalSection
 EndGlobal

@@ -16,120 +16,123 @@ namespace senai_spmed_webAPI.Controllers
     [ApiController]
     public class PacientesController : ControllerBase
     {
-        /// <summary>
-        /// Objeto que irá receber todos os métodos definidos na interface
-        /// </summary>
         private IPacienteRepository _pacienteRepository { get; set; }
 
-        /// <summary>
-        /// Instancia o objeto para que haja referência às implementações feitas no repositório
-        /// </summary>
         public PacientesController()
         {
             _pacienteRepository = new PacienteRepository();
         }
 
         /// <summary>
-        /// Lista todos os Pacientes existentes
+        /// Lista todos os pacientes
         /// </summary>
-        /// <returns>Uma lista de pacientes com o status code 200 - Ok</returns>
+        /// <returns>uma lista de pacientes</returns>
         [Authorize(Roles = "1")]
         [HttpGet]
-        public IActionResult Listar()
+        public IActionResult ListarTodos()
         {
-            return Ok(_pacienteRepository.Listar());
+            try
+            {
+                return Ok(_pacienteRepository.ListarTodos());
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
         }
 
         /// <summary>
-        /// Busca um paciente pelo seu id
+        /// Busca um paciente pelo id
         /// </summary>
-        /// <param name="idPaciente">id do paciente a ser buscado</param>
-        /// <returns>Um paciente encontrado com o status code 200 - Ok</returns>
+        /// <param name="idPaciente">id do paciente a ser procurado</param>
+        /// <returns>Um paciente</returns>
         [Authorize(Roles = "1")]
         [HttpGet("{idPaciente}")]
         public IActionResult BuscarPorId(int idPaciente)
         {
-            Paciente PacienteBuscado = _pacienteRepository.BuscarPorId(idPaciente);
-
-            if (PacienteBuscado == null)
+            try
             {
-                return NotFound("O Paciente informado não existe!");
+                Paciente pacienteBuscado = _pacienteRepository.BuscarPorId(idPaciente);
+
+                if (pacienteBuscado != null)
+                {
+                    return Ok(pacienteBuscado);
+                }
+
+                return BadRequest("O paciente requisitado não existe");
+
             }
-            return Ok(PacienteBuscado);
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
+
         }
 
         /// <summary>
-        /// Cadastra um Paciente
+        /// Cadastra uma nov paciente
         /// </summary>
-        /// <param name="novoPaciente">Paciente a ser cadastrado</param>
-        /// <returns>Um status code 201 - Created</returns>
+        /// <param name="novoPaciente">Objeto paciente com os atributos a serem cadastrados</param>
+        /// <returns>Status code 201 created</returns>
         [Authorize(Roles = "1")]
         [HttpPost]
         public IActionResult Cadastrar(Paciente novoPaciente)
         {
-            if (novoPaciente.DataNascimento < DateTime.Now)
+            try
             {
                 _pacienteRepository.Cadastrar(novoPaciente);
+
+                return StatusCode(201);
+
             }
-            else
+            catch (Exception erro)
             {
-
-                return BadRequest(new { mensagem = "Teriamos o primeiro viajante do tempo?!" });
+                return BadRequest(erro);
             }
-
-            return StatusCode(201);
         }
 
         /// <summary>
-        /// Atualiza um paciente existente
+        /// Atualiza um paciente
         /// </summary>
-        /// <param name="pacienteAtualizado">Objeto com as novas informações do Paciente e o id do paciente a ser atualizado</param>
-        /// <returns>Um status code 204 - No content</returns>
+        /// <param name="idPaciente">Id do paciente a ser buscado</param>
+        /// <param name="pacienteAtualizado">Objeto com atributos a serem inseridos</param>
+        /// <returns>Status code 204 no content</returns>
         [Authorize(Roles = "1")]
-        [HttpPut]
-        public IActionResult Atualizar(Paciente pacienteAtualizado)
+        [HttpPut("{idPaciente}")]
+        public IActionResult Atualizar(int idPaciente, Paciente pacienteAtualizado)
         {
             try
             {
-                if (pacienteAtualizado.DataNascimento < DateTime.Now)
-                {
-                    Paciente PacienteBuscado = _pacienteRepository.BuscarPorId(pacienteAtualizado.IdPaciente);
+                _pacienteRepository.Atualizar(idPaciente, pacienteAtualizado);
 
-                    if (PacienteBuscado != null)
-                    {
-                        if (pacienteAtualizado != null)
-                            _pacienteRepository.Atualizar(pacienteAtualizado);
-
-                    }
-                    else
-                    {
-                        return BadRequest(new { mensagem = "O Paciente informado não existe" });
-                    }
-                    return StatusCode(204);
-                }
-                else
-                {
-                    return BadRequest(new { mensagem = "Teriamos o primeiro viajante do tempo?!" });
-                }
+                return StatusCode(204);
             }
-            catch (Exception ex)
+            catch (Exception erro)
             {
-                return BadRequest(ex);
+                return BadRequest(erro);
             }
+
         }
 
         /// <summary>
-        /// Deleta um paciente
+        /// Exclui um paciente
         /// </summary>
-        /// <param name="idPaciente">id do Paciente a ser deletado</param>
-        /// <returns>Um status code 204 - No content</returns>
+        /// <param name="idPaciente">Id do paciente a ser buscado</param>
+        /// <returns>Status code 204 no content</returns>
         [Authorize(Roles = "1")]
         [HttpDelete("{idPaciente}")]
         public IActionResult Deletar(int idPaciente)
         {
-            _pacienteRepository.Deletar(idPaciente);
+            try
+            {
+                _pacienteRepository.Deletar(idPaciente);
 
-            return StatusCode(204);
+                return StatusCode(204);
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
         }
     }
 }

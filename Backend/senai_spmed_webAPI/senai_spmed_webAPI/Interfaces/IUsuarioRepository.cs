@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using senai_spmed_webAPI.Domains;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,61 +10,47 @@ namespace senai_spmed_webAPI.Interfaces
     interface IUsuarioRepository
     {
         /// <summary>
-        /// Valida o usuário
+        /// Valida o usuário 
         /// </summary>
-        /// <param name="email">recebe o e-mail do usuario</param>
-        /// <param name="senha">recebe a senha do usuario</param>
-        /// <returns>O usuário encontrado</returns>
+        /// <param name="email">E-mail do usuário</param>
+        /// <param name="senha">Senha do usuário</param>
+        /// <returns>Um objeto do tipo Usuario que foi encontrado</returns>
         Usuario Login(string email, string senha);
 
         /// <summary>
-        /// Busca por um usuário pelo seu ID
+        /// Lista todas as usuarios
         /// </summary>
-        /// <param name="idUsuario">ID do usuário a ser buscado</param>
-        /// <returns>Usuário encontrado</returns>
+        /// <returns>Uma lista de usuarios</returns>
+        List<Usuario> ListarTodos();
+
+        /// <summary>
+        /// Busca uma usuario pelo id
+        /// </summary>
+        /// <param name="idUsuario">id do usuario a ser buscado</param>
+        /// <returns>Um usuario</returns>
         Usuario BuscarPorId(int idUsuario);
 
         /// <summary>
-        /// Cadastra um usuário
+        /// Cadastra uma nova usuario
         /// </summary>
-        /// <param name="novoUsuario">Recebe os dados de um usuário cadastrado</param>
-        void Cadastrar(Usuario novoUsuario);
+        /// <param name="novausuario">Objeto usuario com atributos a serem cadastrados</param>
+        void Cadastrar(Usuario novausuario);
 
         /// <summary>
-        /// Lista todos os usuários
+        /// Atualiza uma usuario existente
         /// </summary>
-        /// <returns> Uma lista de usuários</returns>
-        List<Usuario> Listar();
+        /// <param name="idUsuario">id da usuario a ser buscada</param>
+        /// <param name="usuarioAtualizada">Objeto usuario com atributos a serem atualizados</param>
+        void Atualizar(int idUsuario, Usuario usuarioAtualizada);
 
         /// <summary>
-        /// Atualiza os dados de um usuário
+        /// Exclui uma usuario
         /// </summary>
-        /// <param name="usuarioAtualizado">Recebe os novos dados do usuário</param>
-        void Atualizar(Usuario usuarioAtualizado);
-
-        /// <summary>
-        /// Deleta um usuário
-        /// </summary>
-        /// <param name="idUsuario"> ID do usuário a ser deletado</param>
+        /// <param name="idUsuario">id da usuario a ser buscada</param>
         void Deletar(int idUsuario);
 
-        /// <summary>
-        /// Salva a foto de um usuário
-        /// </summary>
-        /// <param name="foto">foto a ser salva</param>
-        /// <param name="id_usuario">id do usuário a qual a foto pertence</param>
-        void SalvarPerfilDir(IFormFile foto, int id_usuario);
+        void SalvarPerfilDir(IFormFile foto, int idUsuario);
 
-        /// <summary>
-        /// Consulta a foto do usuário
-        /// </summary>
-        /// <param name="id_usuario">id do usuário a ter a foto buscada</param>
-        /// <returns>A foto em base64</returns>
-        string ConsultarPerfilDir(int id_usuario);
-
-        /// <summary>
-        /// Cria pasta caso não exista
-        /// </summary>
-        void CriarPasta();
+        string ConsultarPerfilDir(int idUsuario);
     }
 }

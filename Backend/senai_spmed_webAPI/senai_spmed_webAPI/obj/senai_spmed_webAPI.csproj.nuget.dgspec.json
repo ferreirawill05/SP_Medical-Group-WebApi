@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\willi\\Desktop\\SP_Medical-Group-WebApi\\Backend\\senai_spmed_webAPI\\senai_spmed_webAPI\\senai_spmed_webAPI.csproj": {}
+    "C:\\Users\\44037739828\\Desktop\\SP_MedicalGroup\\SP_MedicalGroup\\Backend\\senai_spmed_webAPI\\senai_spmed_webAPI\\senai_spmed_webAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\willi\\Desktop\\SP_Medical-Group-WebApi\\Backend\\senai_spmed_webAPI\\senai_spmed_webAPI\\senai_spmed_webAPI.csproj": {
+    "C:\\Users\\44037739828\\Desktop\\SP_MedicalGroup\\SP_MedicalGroup\\Backend\\senai_spmed_webAPI\\senai_spmed_webAPI\\senai_spmed_webAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\willi\\Desktop\\SP_Medical-Group-WebApi\\Backend\\senai_spmed_webAPI\\senai_spmed_webAPI\\senai_spmed_webAPI.csproj",
+        "projectUniqueName": "C:\\Users\\44037739828\\Desktop\\SP_MedicalGroup\\SP_MedicalGroup\\Backend\\senai_spmed_webAPI\\senai_spmed_webAPI\\senai_spmed_webAPI.csproj",
         "projectName": "senai_spmed_webAPI",
-        "projectPath": "C:\\Users\\willi\\Desktop\\SP_Medical-Group-WebApi\\Backend\\senai_spmed_webAPI\\senai_spmed_webAPI\\senai_spmed_webAPI.csproj",
-        "packagesPath": "C:\\Users\\willi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\willi\\Desktop\\SP_Medical-Group-WebApi\\Backend\\senai_spmed_webAPI\\senai_spmed_webAPI\\obj\\",
+        "projectPath": "C:\\Users\\44037739828\\Desktop\\SP_MedicalGroup\\SP_MedicalGroup\\Backend\\senai_spmed_webAPI\\senai_spmed_webAPI\\senai_spmed_webAPI.csproj",
+        "packagesPath": "C:\\Users\\44037739828\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\44037739828\\Desktop\\SP_MedicalGroup\\SP_MedicalGroup\\Backend\\senai_spmed_webAPI\\senai_spmed_webAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\willi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\44037739828\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -40,9 +40,43 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
-            "System.Data.SqlClient": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
-              "version": "[4.8.3, )"
+              "version": "[5.0.10, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Abstractions": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
+              "target": "Package",
+              "version": "[5.0.10, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[5.0.10, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer.Design": {
+              "target": "Package",
+              "version": "[1.1.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[5.0.10, )"
+            },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[2.14.1, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.2.2, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[6.12.2, )"
             }
           },
           "imports": [
@@ -63,7 +97,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.403\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.302\\RuntimeIdentifierGraph.json"
         }
       }
     }

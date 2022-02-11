@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using senai_spmed_webAPI.Context;
 using senai_spmed_webAPI.Domains;
 using senai_spmed_webAPI.Interfaces;
 using System;
@@ -11,24 +12,16 @@ namespace senai_spmed_webAPI.Repositories
 {
     public class UsuarioRepository : IUsuarioRepository
     {
-        SpmedContext ctx = new SpmedContext();
+        SPMedContext ctx = new SPMedContext();
 
-        public void Atualizar(Usuario usuarioAtualizado)
+        public void Atualizar(int idUsuario, Usuario usuarioAtualizado)
         {
-            Usuario usuarioBuscado = BuscarPorId(usuarioAtualizado.IdUsuario);
+            Usuario usuarioBuscado = BuscarPorId(idUsuario);
 
-            if (usuarioAtualizado.NomeUsuario != null)
+            if (usuarioAtualizado.IdTipoUsuario != null && usuarioAtualizado.Email != null && usuarioAtualizado.Senha != null)
             {
-                usuarioBuscado.NomeUsuario = usuarioAtualizado.NomeUsuario;
-            }
-
-            if (usuarioAtualizado.Email != null)
-            {
+                usuarioBuscado.IdTipoUsuario = usuarioAtualizado.IdTipoUsuario;
                 usuarioBuscado.Email = usuarioAtualizado.Email;
-            }
-
-            if (usuarioAtualizado.Senha != null)
-            {
                 usuarioBuscado.Senha = usuarioAtualizado.Senha;
             }
 
@@ -42,38 +35,30 @@ namespace senai_spmed_webAPI.Repositories
             return ctx.Usuarios.FirstOrDefault(u => u.IdUsuario == idUsuario);
         }
 
-        public void Cadastrar(Usuario novoUsuario)
+        public void Cadastrar(Usuario novousuario)
         {
-            ctx.Usuarios.Add(novoUsuario);
+            ctx.Add(novousuario);
 
             ctx.SaveChanges();
         }
 
-        public string ConsultarPerfilDir(int id_usuario)
+        public string ConsultarPerfilDir(int idUsuario)
         {
-            CriarPasta();
+            string nomeNovo = idUsuario.ToString() + ".png";
 
-            string nome_novo = id_usuario.ToString() + ".png";
-            string caminho = Path.Combine("Perfil", nome_novo);
+            string caminho = Path.Combine("Perfil", nomeNovo);
 
+            //analisa se o caminho existe
             if (File.Exists(caminho))
             {
+                //recupera o array de bytes
                 byte[] bytesArquivo = File.ReadAllBytes(caminho);
+
+                //converte em base64
                 return Convert.ToBase64String(bytesArquivo);
             }
 
             return null;
-
-        }
-
-        public void CriarPasta()
-        {
-            string pasta = "Perfil";
-
-            if (!Directory.Exists(pasta))
-            {
-                Directory.CreateDirectory(pasta);
-            }
         }
 
         public void Deletar(int idUsuario)
@@ -85,7 +70,7 @@ namespace senai_spmed_webAPI.Repositories
             ctx.SaveChanges();
         }
 
-        public List<Usuario> Listar()
+        public List<Usuario> ListarTodos()
         {
             return ctx.Usuarios.ToList();
         }
@@ -95,12 +80,15 @@ namespace senai_spmed_webAPI.Repositories
             return ctx.Usuarios.FirstOrDefault(u => u.Email == email && u.Senha == senha);
         }
 
-        public void SalvarPerfilDir(IFormFile foto, int id_usuario)
+        public void SalvarPerfilDir(IFormFile foto, int idUsuario)
         {
-            string nome_novo = id_usuario.ToString() + ".png";
+            //Define o nome do arquivo ocm o Id do Usuairo + .png
+            string nomeNovo = idUsuario.ToString() + ".png";
 
-            using (var stream = new FileStream(Path.Combine("Perfil", nome_novo), FileMode.Create))
+            //FileStream fornece uma exibicao para uma sequencia de bytes, dando suporte para leitura e gravação
+            using (var stream = new FileStream(Path.Combine("Perfil", nomeNovo), FileMode.Create))
             {
+                //copipa todos os elementos(array de bytes)  para o caminho indicado
                 foto.CopyTo(stream);
             }
         }

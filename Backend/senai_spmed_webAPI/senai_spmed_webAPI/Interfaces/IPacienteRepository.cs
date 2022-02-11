@@ -1,4 +1,5 @@
-﻿using System;
+﻿using senai_spmed_webAPI.Domains;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,34 +9,35 @@ namespace senai_spmed_webAPI.Interfaces
     interface IPacienteRepository
     {
         /// <summary>
-        /// Busca por um paciente pelo seu ID
+        /// Lista todas as paciente
         /// </summary>
-        /// <param name="idPaciente">ID do usuário a ser buscado</param>
-        /// <returns>Usuário encontrado</returns>
+        /// <returns>Uma lista de paciente</returns>
+        List<Paciente> ListarTodos();
+
+        /// <summary>
+        /// Busca um paciente pelo id
+        /// </summary>
+        /// <param name="idPaciente">id da paciente a ser buscada</param>
+        /// <returns>Uma paciente</returns>
         Paciente BuscarPorId(int idPaciente);
 
         /// <summary>
-        /// Cadastra um paciente
+        /// Cadastra um novo paciente
         /// </summary>
-        /// <param name="novoPaciente">Recebe os dados de um usuário cadastrado</param>
-        void Cadastrar(Paciente novoPaciente);
+        /// <param name="novopaciente">Objeto paciente com atributos a serem cadastrados</param>
+        void Cadastrar(Paciente novopaciente);
 
         /// <summary>
-        /// Lista todos os pacientes
+        /// Atualiza um paciente existente
         /// </summary>
-        /// <returns> Uma lista de usuários</returns>
-        List<Paciente> Listar();
+        /// <param name="idPaciente">id da paciente a ser buscado</param>
+        /// <param name="pacienteAtualizado">Objeto paciente com atributos a serem atualizados</param>
+        void Atualizar(int idPaciente, Paciente pacienteAtualizado);
 
         /// <summary>
-        /// Atualiza os dados de um paciente
+        /// Exclui um paciente
         /// </summary>
-        /// <param name="PacienteAtualizado">Recebe os novos dados do paciente</param>
-        void Atualizar(Paciente PacienteAtualizado);
-
-        /// <summary>
-        /// Deleta um paciente
-        /// </summary>
-        /// <param name="idPaciente"> ID do paciente a ser deletado</param>
+        /// <param name="idPaciente">id do paciente a ser buscado</param>
         void Deletar(int idPaciente);
     }
 }

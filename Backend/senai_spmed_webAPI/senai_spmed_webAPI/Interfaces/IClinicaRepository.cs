@@ -1,4 +1,5 @@
-﻿using System;
+﻿using senai_spmed_webAPI.Domains;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,34 +9,35 @@ namespace senai_spmed_webAPI.Interfaces
     interface IClinicaRepository
     {
         /// <summary>
-        /// Busca por uma clinica pelo seu ID
+        /// Lista todas as clinicas
         /// </summary>
-        /// <param name="idClinica">ID da clinica a ser buscada</param>
-        /// <returns>Clínica encontrada</returns>
+        /// <returns>Uma lista de clinicas</returns>
+        List<Clinica> ListarTodos();
+
+        /// <summary>
+        /// Busca uma clinica pelo id
+        /// </summary>
+        /// <param name="idClinica">id da clinica a ser buscada</param>
+        /// <returns>Uma clinica</returns>
         Clinica BuscarPorId(int idClinica);
 
         /// <summary>
-        /// Cadastra uma clinica
+        /// Cadastra uma nova clinica
         /// </summary>
-        /// <param name="novaClinica">Recebe os dados de uma clínica cadastrada</param>
+        /// <param name="novaClinica">Objeto clinica com atributos a serem cadastrados</param>
         void Cadastrar(Clinica novaClinica);
 
         /// <summary>
-        /// Lista todas as clinicas
+        /// Atualiza uma clinica existente
         /// </summary>
-        /// <returns> Uma lista de clinicas</returns>
-        List<Clinica> Listar();
+        /// <param name="idClinica">id da clinica a ser buscada</param>
+        /// <param name="clinicaAtualizada">Objeto clinica com atributos a serem atualizados</param>
+        void Atualizar(int idClinica, Clinica clinicaAtualizada);
 
         /// <summary>
-        /// Atualiza os dados de uma clinica
+        /// Exclui uma clinica
         /// </summary>
-        /// <param name="clinicaAtualizada">Recebe os novos dados da clinica</param>
-        void Atualizar(Clinica clinicaAtualizada);
-
-        /// <summary>
-        /// Deleta uma clínica
-        /// </summary>
-        /// <param name="idClinica"> ID da clínica a ser deletada</param>
+        /// <param name="idClinica">id da clinica a ser buscada</param>
         void Deletar(int idClinica);
     }
 }

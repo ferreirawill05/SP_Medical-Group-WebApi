@@ -16,101 +16,124 @@ namespace senai_spmed_webAPI.Controllers
     [ApiController]
     public class ClinicasController : ControllerBase
     {
-        /// <summary>
-        /// Objeto que irá receber todos os métodos definidos na interface
-        /// </summary>
         private IClinicaRepository _clinicaRepository { get; set; }
 
-        /// <summary>
-        /// Instancia o objeto para que haja referência às implementações feitas no repositório
-        /// </summary>
         public ClinicasController()
         {
             _clinicaRepository = new ClinicaRepository();
         }
 
         /// <summary>
-        /// Lista todos os Usuário existentes
+        /// Lista todas as clinicas
         /// </summary>
-        /// <returns>Uma lista de usuários com o status code 200 - Ok</returns>
+        /// <returns>uma lista de clinicas</returns>
+        [Authorize(Roles ="1")]
         [HttpGet]
-        public IActionResult Listar()
+        public IActionResult ListarTodas()
         {
-            return Ok(_clinicaRepository.Listar());
+            try
+            {
+                return Ok(_clinicaRepository.ListarTodos());
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
         }
 
         /// <summary>
-        /// Busca uma clinica pelo seu id
+        /// Busca uma clinica pelo id
         /// </summary>
-        /// <param name="idClinica">id da clinica a ser buscado</param>
-        /// <returns>Uma clinica encontrada com o status code 200 - Ok</returns>
+        /// <param name="idClinica">id da clinica a ser procurada</param>
+        /// <returns>Uma clinica</returns>
+        [Authorize(Roles = "1")]
         [HttpGet("{idClinica}")]
         public IActionResult BuscarPorId(int idClinica)
         {
-            Clinica ClinicaBuscada = _clinicaRepository.BuscarPorId(idClinica);
-
-            if (ClinicaBuscada == null)
+            try
             {
-                return NotFound("A clínica informada não existe!");
+                Clinica clinicaBuscada = _clinicaRepository.BuscarPorId(idClinica);
+
+                if (clinicaBuscada != null)
+                {
+                    return Ok(clinicaBuscada);
+                }
+
+                return BadRequest("A clinica requisitada não existe");
+
             }
-            return Ok(ClinicaBuscada);
+            catch (Exception erro)
+            {
+               return BadRequest(erro);
+            }
+
         }
 
         /// <summary>
-        /// Cadastra uma Clínica
+        /// Cadastra uma nova clinica
         /// </summary>
-        /// <param name="novaClinica">Clinica a ser cadastrada</param>
-        /// <returns>Um status code 201 - Created</returns>
+        /// <param name="novaClinica">Objeto clinica com os atributos a serem cadastrados</param>
+        /// <returns>Status code 201 created</returns>
         [Authorize(Roles = "1")]
         [HttpPost]
         public IActionResult Cadastrar(Clinica novaClinica)
         {
-            _clinicaRepository.Cadastrar(novaClinica);
+            try
+            {
+                _clinicaRepository.Cadastrar(novaClinica);
 
-            return StatusCode(201);
+                return StatusCode(201);
+
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
         }
 
         /// <summary>
-        /// Atualiza uma clinica existente
+        /// Atualiza uma clinica
         /// </summary>
-        /// <param name="ClinicaAtualizada">Objeto com as novas informações da clinica e o id da clinica a ser atualizada</param>
-        /// <returns>Um status code 204 - No content</returns>
+        /// <param name="idClinica">Id da clinica a ser buscada</param>
+        /// <param name="clinicaAtualizada">Objeto com atributos a serem inseridos</param>
+        /// <returns>Status code 204 no content</returns>
         [Authorize(Roles = "1")]
-        [HttpPut]
-        public IActionResult Atualizar(Clinica ClinicaAtualizada)
+        [HttpPut("{idClinica}")]
+        public IActionResult Atualizar(int idClinica, Clinica clinicaAtualizada)
         {
             try
             {
-                Clinica ClinicaBuscado = _clinicaRepository.BuscarPorId(ClinicaAtualizada.IdClinica);
-                if (ClinicaBuscado != null)
-                {
-                    if (ClinicaAtualizada != null)
-                        _clinicaRepository.Atualizar(ClinicaAtualizada);
-                }
-                else
-                {
-                    return BadRequest(new { mensagem = "A clinca informada não existe" });
-                }
+                _clinicaRepository.Atualizar(idClinica, clinicaAtualizada);
+
                 return StatusCode(204);
             }
-            catch (Exception ex)
+            catch (Exception erro)
             {
-                return BadRequest(ex);
+                return BadRequest(erro);
             }
+
         }
 
         /// <summary>
-        /// Deleta uma clinica
+        /// Exclui uma clinica
         /// </summary>
-        /// <param name="idClinica">id da clinica a ser deletado</param>
-        /// <returns>Um status code 204 - No content</returns>
+        /// <param name="idClinica">Id da clinica a ser buscada</param>
+        /// <returns>Status code 204 no content</returns>
         [Authorize(Roles = "1")]
         [HttpDelete("{idClinica}")]
         public IActionResult Deletar(int idClinica)
         {
-            _clinicaRepository.Deletar(idClinica);
+            try
+            {
+                _clinicaRepository.Deletar(idClinica);
 
-            return StatusCode(204);
+                return StatusCode(204);
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
         }
     }
+    
 }

@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using senai_spmed_webAPI.Domains;
 using senai_spmed_webAPI.Interfaces;
 using senai_spmed_webAPI.Repositories;
+using senai_spmed_webAPI.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,24 +18,36 @@ namespace senai_spmed_webAPI.Controllers
     [ApiController]
     public class ConsultasController : ControllerBase
     {
-        /// <summary>
-        /// Objeto que irá receber todos os métodos definidos na interface
-        /// </summary>
         private IConsultaRepository _consultaRepository { get; set; }
 
-        /// <summary>
-        /// Instancia o objeto para que haja referência às implementações feitas no repositório
-        /// </summary>
         public ConsultasController()
         {
             _consultaRepository = new ConsultaRepository();
         }
 
         /// <summary>
-        ///  Listas todas as consultas do usuário logado
+        /// Lista todas as consultas existentes
         /// </summary>
         /// <returns>Uma lista de consultas</returns>
-        [Authorize(Roles = "2,3")]
+        [Authorize(Roles ="1")]
+        [HttpGet]
+        public IActionResult ListarTodas()
+        {
+            try
+            {
+                return Ok(_consultaRepository.ListarTodas());
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
+        }
+
+        /// <summary>
+        /// Lista as consultas a um usuário, sendo este um paciente ou médico
+        /// </summary>
+        /// <returns>Uma lista de consultas associadas</returns>
+        [Authorize(Roles ="2,3")]
         [HttpGet("minhas")]
         public IActionResult ListarMinhas()
         {
@@ -43,144 +57,158 @@ namespace senai_spmed_webAPI.Controllers
 
                 return Ok(_consultaRepository.ListarMinhas(idUsuario));
             }
-            catch (Exception error)
+            catch (Exception erro)
             {
                 return BadRequest(new
                 {
-                    mensagem = "Não é possível mostrar as presenças se o usuário não estiver logado!",
-                    error
+                    erro
                 });
             }
         }
 
         /// <summary>
-        /// Lista todas as Consultas existentes
+        /// Busca uma consulta pelo id
         /// </summary>
-        /// <returns>Uma lista de consultas com o status code 200 - Ok</returns>
-        [Authorize(Roles = "1")]
-        [HttpGet]
-        public IActionResult Listar()
-        {
-            return Ok(_consultaRepository.Listar());
-        }
-
-        /// <summary>
-        /// Busca uma consulta pelo seu id
-        /// </summary>
-        /// <param name="idConsulta">id da consulta a ser buscada</param>
-        /// <returns>Uma consulta encontrada com o status code 200 - Ok</returns>
-        [Authorize(Roles = "1")]
-        [HttpGet("{idConsulta}")]
-        public IActionResult BuscarPorId(int idConsulta)
-        {
-            Consulta ConsultaBuscada = _consultaRepository.BuscarPorId(idConsulta);
-
-            if (ConsultaBuscada == null)
-            {
-                return NotFound("A Consulta informada não existe!");
-            }
-            return Ok(ConsultaBuscada);
-        }
-
-        /// <summary>
-        /// Cadastra uma Consulta
-        /// </summary>
-        /// <param name="novaConsulta">Consulta a ser cadastrada</param>
-        /// <returns>Um status code 201 - Created</returns>
-        [Authorize(Roles = "1")]
-        [HttpPost]
-        public IActionResult Cadastrar(Consulta novaConsulta)
-        {
-            _consultaRepository.Cadastrar(novaConsulta);
-
-            return StatusCode(201);
-        }
-
-        /// <summary>
-        /// Atualiza uma consulta existente
-        /// </summary>
-        /// <param name="consultaAtualizada">Objeto com as novas informações da Consulta e o id da consulta a ser atualizada</param>
-        /// <returns>Um status code 204 - No content</returns>
-        [Authorize(Roles = "1")]
-        [HttpPut]
-        public IActionResult Atualizar(Consulta consultaAtualizada)
+        /// <param name="id">Id da consulta a ser buscada</param>
+        /// <returns>Uma consulta</returns>
+        [Authorize(Roles ="1")]
+        [HttpGet("{id}")]
+        public IActionResult BuscarPorId(int id)
         {
             try
             {
-                Consulta consultaBuscada = _consultaRepository.BuscarPorId(consultaAtualizada.IdConsulta);
+                Consultum consultaBuscada = _consultaRepository.BuscarPorId(id);
+
                 if (consultaBuscada != null)
                 {
-                    _consultaRepository.Atualizar(consultaAtualizada);
-                    return StatusCode(204);
+                    return Ok(consultaBuscada);
                 }
-                else
-                {
-                    return BadRequest(new { mensagem = "A Consulta informada não existe" });
-                }
+
+                return BadRequest("A consulta requisitada não existe");
             }
-            catch (Exception ex)
+            catch (Exception erro)
             {
-                return BadRequest(ex);
+                return BadRequest(erro);
             }
         }
+
         /// <summary>
-        /// Deleta uma consulta
+        /// Cadastra uma nova consulta
         /// </summary>
-        /// <param name="idConsulta">id da Consulta a ser deletada</param>
-        /// <returns>Um status code 204 - No content</returns>
-        [Authorize(Roles = "1")]
+        /// <param name="novaConsulta">Objeto com atributos a serem inseridos</param>
+        /// <returns>status code 201 created</returns>
+        [Authorize(Roles ="1")]
+        [HttpPost]
+        public IActionResult Cadastrar(CadastroViewModel novaConsulta)
+        {
+            try
+            {
+                Consultum consultaNova = new Consultum();
+
+                consultaNova.IdPaciente = novaConsulta.IdPaciente;
+                consultaNova.IdMedico = novaConsulta.IdMedico;
+                consultaNova.IdSituacao = novaConsulta.IdSituacao;
+                consultaNova.DataConsulta = novaConsulta.DataConsulta;
+                consultaNova.DescricaoConsulta = consultaNova.DescricaoConsulta;
+
+                _consultaRepository.Cadastrar(consultaNova);
+
+                return StatusCode(201);
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
+        }
+
+        /// <summary>
+        /// Cancela ou muda a situaçao de uma consulta
+        /// </summary>
+        /// <param name="idConsulta">Id da consulta a ser buscada</param>
+        /// <param name="status">Objeto com atributos a serem inseridos</param>
+        /// <returns>Status code 204 no content</returns>
+        [Authorize(Roles ="1")]
+        [HttpPatch("{idConsulta}")]
+        public IActionResult Cancela(int idConsulta, Consultum status)
+        {
+            try
+            {
+                _consultaRepository.Cancela(idConsulta, status.IdSituacao.ToString());
+
+                return StatusCode(204);
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
+        }
+
+        /// <summary>
+        /// Adiciona descrição a uma consulta
+        /// </summary>
+        /// <param name="idConsulta">Id da consulta a ser buscada</param>
+        /// <param name="novaConsulta">Objeto com atributos a serem inseridos</param>
+        /// <returns>Status code 204 no content</returns>
+        [Authorize(Roles = "2")]
+        [HttpPatch("descricao/{idConsulta}")]
+        public IActionResult AdicionaDescricao(int idConsulta, Consultum novaConsulta)
+        {
+            try
+            {
+                _consultaRepository.AdicionarDecrição(idConsulta, novaConsulta);
+
+                return StatusCode(204);
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
+
+        }
+
+        /// <summary>
+        /// Atualiza uma consulta
+        /// </summary>
+        /// <param name="idConsulta">Id da consulta a ser buscada</param>
+        /// <param name="consultaAtualizada">Objeto com atributos a serem inseridos</param>
+        /// <returns>Status code 204 no content</returns>
+        [Authorize(Roles ="1")]
+        [HttpPut("{idConsulta}")]
+        public IActionResult Atualizar(int idConsulta, Consultum consultaAtualizada)
+        {
+            try
+            {
+                _consultaRepository.Atualizar(idConsulta, consultaAtualizada);
+
+                return StatusCode(204);
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
+
+        }
+
+        /// <summary>
+        /// Exclui uma consulta
+        /// </summary>
+        /// <param name="idConsulta">Id da consulta a ser buscada</param>
+        /// <returns>Status code 204 no content</returns>
+        [Authorize(Roles ="1")]
         [HttpDelete("{idConsulta}")]
         public IActionResult Deletar(int idConsulta)
         {
-            _consultaRepository.Deletar(idConsulta);
-
-            return StatusCode(204);
-        }
-
-        /// <summary>
-        /// Atualiza a situação de uma consulta
-        /// </summary>
-        /// <param name="idConsulta">Id da consulta a ser atualizada</param>
-        /// <param name="status">nova situação da consulta</param>
-        /// <returns>Um status code 200 - OK</returns>
-        [Authorize(Roles = "1")]
-        [HttpPatch("status/{idConsulta}")]
-        public IActionResult AlterarStatus(int idConsulta, Situacao status)
-        {
             try
             {
-                _consultaRepository.AlterarStatus(idConsulta, status.IdSituacao);
+                _consultaRepository.Deletar(idConsulta);
 
                 return StatusCode(204);
             }
-            catch (Exception error)
+            catch (Exception erro)
             {
-                return BadRequest(error);
-                throw;
+                return BadRequest(erro);
             }
         }
 
-        /// <summary>
-        /// Atualiza a descrição de uma consulta
-        /// </summary>
-        /// <param name="idConsulta">Id da consulta a ser atualizada</param>
-        /// <param name="descricao">nova descrição da consulta</param>
-        /// <returns>Um status code 200 - OK</returns>
-        [Authorize(Roles = "2")]
-        [HttpPatch("descricao/{idConsulta}")]
-        public IActionResult AdicionarDescricao(int idConsulta, Consulta descricao)
-        {
-            try
-            {
-                _consultaRepository.AdicionarDescricao(idConsulta, descricao.Descricao);
-
-                return StatusCode(204);
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-                throw;
-            }
-        }
     }
 }

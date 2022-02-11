@@ -1,4 +1,5 @@
-﻿using System;
+﻿using senai_spmed_webAPI.Domains;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,34 +9,35 @@ namespace senai_spmed_webAPI.Interfaces
     interface IMedicoRepository
     {
         /// <summary>
-        /// Busca por um médico pelo seu ID
+        /// Lista todas as medico
         /// </summary>
-        /// <param name="idMedico">ID do usuário a ser buscado</param>
-        /// <returns>Usuário encontrado</returns>
+        /// <returns>Uma lista de medico</returns>
+        List<Medico> ListarTodos();
+
+        /// <summary>
+        /// Busca um medico pelo id
+        /// </summary>
+        /// <param name="idMedico">id da medico a ser buscada</param>
+        /// <returns>Uma medico</returns>
         Medico BuscarPorId(int idMedico);
 
         /// <summary>
-        /// Cadastra um médico
+        /// Cadastra um novo medico
         /// </summary>
-        /// <param name="novoMedico">Recebe os dados de um usuário cadastrado</param>
-        void Cadastrar(Medico novoMedico);
+        /// <param name="novoMedico">Objeto medico com atributos a serem cadastrados</param>
+        void Cadastrar(Medico novomedico);
 
         /// <summary>
-        /// Lista todos os médicos
+        /// Atualiza um medico existente
         /// </summary>
-        /// <returns> Uma lista de usuários</returns>
-        List<Medico> Listar();
+        /// <param name="idMedico">id da medico a ser buscado</param>
+        /// <param name="medicoAtualizado">Objeto medico com atributos a serem atualizados</param>
+        void Atualizar(int idMedico, Medico medicoAtualizado);
 
         /// <summary>
-        /// Atualiza os dados de um médico
+        /// Exclui um medico
         /// </summary>
-        /// <param name="MedicoAtualizado">Recebe os novos dados do médico</param>
-        void Atualizar(Medico MedicoAtualizado);
-
-        /// <summary>
-        /// Deleta um médico
-        /// </summary>
-        /// <param name="idMedico"> ID do médico a ser deletado</param>
+        /// <param name="idMedico">id do medico a ser buscado</param>
         void Deletar(int idMedico);
     }
 }

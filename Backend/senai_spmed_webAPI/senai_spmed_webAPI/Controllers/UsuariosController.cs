@@ -16,154 +16,123 @@ namespace senai_spmed_webAPI.Controllers
     [ApiController]
     public class UsuariosController : ControllerBase
     {
-        /// <summary>
-        /// Objeto que irá receber todos os métodos definidos na interface
-        /// </summary>
         private IUsuarioRepository _usuarioRepository { get; set; }
 
-        /// <summary>
-        /// Instancia o objeto para que haja referência às implementações feitas no repositório
-        /// </summary>
         public UsuariosController()
         {
             _usuarioRepository = new UsuarioRepository();
         }
 
         /// <summary>
-        /// Lista todos os Usuário existentes
+        /// Lista todos os usuarios
         /// </summary>
-        /// <returns>Uma lista de usuários com o status code 200 - Ok</returns>
+        /// <returns>uma lista de usuarios</returns>
         [Authorize(Roles = "1")]
         [HttpGet]
-        public IActionResult Listar()
+        public IActionResult ListarTodos()
         {
-            return Ok(_usuarioRepository.Listar());
+            try
+            {
+                return Ok(_usuarioRepository.ListarTodos());
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
         }
 
         /// <summary>
-        /// Busca um usuário pelo seu id
+        /// Busca uma usuario pelo id
         /// </summary>
-        /// <param name="idUsuario">id do usuário a ser buscado</param>
-        /// <returns>Um usuário encontrado com o status code 200 - Ok</returns>
+        /// <param name="idUsuario">id da usuario a ser procurada</param>
+        /// <returns>Uma usuario</returns>
         [Authorize(Roles = "1")]
         [HttpGet("{idUsuario}")]
         public IActionResult BuscarPorId(int idUsuario)
         {
-            Usuario usuarioBuscado = _usuarioRepository.BuscarPorId(idUsuario);
-
-            if (usuarioBuscado == null)
-            {
-                return NotFound("O Usuário informado não existe!");
-            }
-            return Ok(usuarioBuscado);
-        }
-
-        /// <summary>
-        /// Consulta a foto de perfil de um usuário
-        /// </summary>
-        /// <returns>A foto em base64</returns>
-        [Authorize(Roles = "2,3")]
-        [HttpGet("imagem")]
-        public IActionResult getDIR()
-        {
             try
             {
-                int idUsuario = Convert.ToInt32(HttpContext.User.Claims.First(c => c.Type == JwtRegisteredClaimNames.Jti).Value);
+                Usuario usuarioBuscada = _usuarioRepository.BuscarPorId(idUsuario);
 
-                string base64 = _usuarioRepository.ConsultarPerfilDir(idUsuario);
+                if (usuarioBuscada != null)
+                {
+                    return Ok(usuarioBuscada);
+                }
 
-                return Ok(base64);
+                return BadRequest("O usuario requisitada não existe");
 
             }
-            catch (Exception ex)
+            catch (Exception erro)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(erro);
             }
+
         }
 
         /// <summary>
-        /// Cadastra um Usuário
+        /// Cadastra uma nova usuario
         /// </summary>
-        /// <param name="novoUsuario">Usuario a ser cadastrado</param>
-        /// <returns>Um status code 201 - Created</returns>
+        /// <param name="novoUsuario">Objeto usuario com os atributos a serem cadastrados</param>
+        /// <returns>Status code 201 created</returns>
         [Authorize(Roles = "1")]
         [HttpPost]
         public IActionResult Cadastrar(Usuario novoUsuario)
         {
-            _usuarioRepository.Cadastrar(novoUsuario);
-
-            return StatusCode(201);
-        }
-
-        /// <summary>
-        /// Salva uma imagem de perfil do usuário
-        /// </summary>
-        /// <param name="arquivo">imagem a ser salva</param>
-        /// <returns>Status code 200 - OK</returns>
-        [Authorize(Roles = "2,3")]
-        [HttpPost("imagem")]
-        public IActionResult postDir(IFormFile arquivo)
-        {
             try
             {
-                if (arquivo.Length < 5000) //5MB
-                    return BadRequest(new { mensagem = "O tamanho máximo da imagem foi atingido." });
-                string extensao = arquivo.FileName.Split('.').Last();
+                _usuarioRepository.Cadastrar(novoUsuario);
 
-                int idUsuario = Convert.ToInt32(HttpContext.User.Claims.First(c => c.Type == JwtRegisteredClaimNames.Jti).Value);
-
-                _usuarioRepository.SalvarPerfilDir(arquivo, idUsuario);
-
-                return Ok();
+                return StatusCode(201);
 
             }
-            catch (Exception ex)
+            catch (Exception erro)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(erro);
             }
         }
 
         /// <summary>
-        /// Atualiza um usuário existente
+        /// Atualiza uma usuario
         /// </summary>
-        /// <param name="usuarioAtualizado">Objeto com as novas informações do Usuário e o id do usuário a ser atualizado</param>
-        /// <returns>Um status code 204 - No content</returns>
+        /// <param name="idUsuario">Id da usuario a ser buscada</param>
+        /// <param name="usuarioAtualizado">Objeto com atributos a serem inseridos</param>
+        /// <returns>Status code 204 no content</returns>
         [Authorize(Roles = "1")]
-        [HttpPut]
-        public IActionResult Atualizar(Usuario usuarioAtualizado)
+        [HttpPut("{idUsuario}")]
+        public IActionResult Atualizar(int idUsuario, Usuario usuarioAtualizado)
         {
             try
             {
-                Usuario usuarioBuscado = _usuarioRepository.BuscarPorId(usuarioAtualizado.IdUsuario);
-                if (usuarioBuscado != null)
-                {
-                    if (usuarioAtualizado != null)
-                        _usuarioRepository.Atualizar(usuarioAtualizado);
-                }
-                else
-                {
-                    return BadRequest(new { mensagem = "O usuário informado não existe" });
-                }
+                _usuarioRepository.Atualizar(idUsuario, usuarioAtualizado);
+
                 return StatusCode(204);
             }
-            catch (Exception ex)
+            catch (Exception erro)
             {
-                return BadRequest(ex);
+                return BadRequest(erro);
             }
+
         }
 
         /// <summary>
-        /// Deleta um usuário
+        /// Exclui uma usuario
         /// </summary>
-        /// <param name="idUsuario">id do Usuário a ser deletado</param>
-        /// <returns>Um status code 204 - No content</returns>
+        /// <param name="idUsuario">Id da usuario a ser buscada</param>
+        /// <returns>Status code 204 no content</returns>
         [Authorize(Roles = "1")]
         [HttpDelete("{idUsuario}")]
         public IActionResult Deletar(int idUsuario)
         {
-            _usuarioRepository.Deletar(idUsuario);
+            try
+            {
+                _usuarioRepository.Deletar(idUsuario);
 
-            return StatusCode(204);
+                return StatusCode(204);
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro);
+            }
         }
     }
 }

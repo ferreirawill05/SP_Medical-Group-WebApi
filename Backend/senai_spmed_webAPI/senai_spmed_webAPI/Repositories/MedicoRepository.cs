@@ -1,4 +1,5 @@
-﻿using senai_spmed_webAPI.Domains;
+﻿using senai_spmed_webAPI.Context;
+using senai_spmed_webAPI.Domains;
 using senai_spmed_webAPI.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -9,30 +10,20 @@ namespace senai_spmed_webAPI.Repositories
 {
     public class MedicoRepository : IMedicoRepository
     {
-        SpmedContext ctx = new SpmedContext();
-        public void Atualizar(Medico MedicoAtualizado)
+        SPMedContext ctx = new SPMedContext();
+
+        public void Atualizar(int idMedico, Medico medicoAtualizado)
         {
-            Medico medicoBuscado = BuscarPorId(MedicoAtualizado.IdMedico);
+            Medico medicoBuscado = BuscarPorId(idMedico);
 
-            if (MedicoAtualizado.IdClinica != 0)
+            if (medicoAtualizado.IdUsuario != null && medicoAtualizado.IdEspecialidade != null && medicoAtualizado.IdClinica != null && medicoAtualizado.NomeMedico != null && medicoAtualizado.SobrenomeMedico != null && medicoAtualizado.Crm != null)
             {
-                medicoBuscado.IdClinica = MedicoAtualizado.IdClinica;
-            }
-
-            if (MedicoAtualizado.Crmv != null)
-            {
-                medicoBuscado.Crmv = MedicoAtualizado.Crmv;
-            }
-
-
-            if (MedicoAtualizado.IdEspecialidade != 0)
-            {
-                medicoBuscado.IdEspecialidade = MedicoAtualizado.IdEspecialidade;
-            }
-
-            if (medicoBuscado.IdUsuario != 0)
-            {
-                medicoBuscado.IdUsuario = MedicoAtualizado.IdUsuario;
+                medicoBuscado.IdUsuario = medicoAtualizado.IdUsuario;
+                medicoBuscado.IdEspecialidade = medicoAtualizado.IdEspecialidade;
+                medicoBuscado.IdClinica = medicoAtualizado.IdClinica;
+                medicoBuscado.NomeMedico = medicoAtualizado.NomeMedico;
+                medicoBuscado.SobrenomeMedico = medicoAtualizado.SobrenomeMedico;
+                medicoBuscado.Crm = medicoAtualizado.Crm;
             }
 
             ctx.Medicos.Update(medicoBuscado);
@@ -42,12 +33,12 @@ namespace senai_spmed_webAPI.Repositories
 
         public Medico BuscarPorId(int idMedico)
         {
-            return ctx.Medicos.Include(u => u.IdUsuarioNavigation).Include(c => c.IdClinicaNavigation).Include(e => e.IdEspecialidadeNavigation).FirstOrDefault(m => m.IdMedico == idMedico);
+            return ctx.Medicos.FirstOrDefault(m => m.IdMedico == idMedico);
         }
 
-        public void Cadastrar(Medico novoMedico)
+        public void Cadastrar(Medico novomedico)
         {
-            ctx.Medicos.Add(novoMedico);
+            ctx.Medicos.Add(novomedico);
 
             ctx.SaveChanges();
         }
@@ -61,9 +52,9 @@ namespace senai_spmed_webAPI.Repositories
             ctx.SaveChanges();
         }
 
-        public List<Medico> Listar()
+        public List<Medico> ListarTodos()
         {
-            return ctx.Medicos.Include(u => u.IdUsuarioNavigation).Include(c => c.IdClinicaNavigation).Include(e => e.IdEspecialidadeNavigation).ToList();
+            return ctx.Medicos.ToList();
         }
     }
 }
